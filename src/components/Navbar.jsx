@@ -1,3 +1,4 @@
+// Navbar component for KrishiBodhi AI responsive layout
 import React from 'react';
 
 export default function Navbar() {
