@@ -33,8 +33,9 @@ KrishiBodhi AI/
 │   ├── package.json          # Dependency manifestations & build scripts
 │   └── postcss.config.js     # PostCSS styling compilation plugins
 └── Backend/                  # Reserved space for future ML models & API routes
+```
 
-💻 Local Installation & Server Instantiation
+## 💻 Local Installation & Server Instantiation
 To duplicate and execution-test this framework locally, run the following parameters inside your terminal sequence:
 
 1. Change Environment Directory
