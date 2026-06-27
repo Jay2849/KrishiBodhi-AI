@@ -72,7 +72,7 @@ export default function Login({ onLoginSuccess }) {
       
       {/* 🌲 Left Section: Brand Panel */}
       <div className="hidden md:flex flex-col justify-between bg-[#1E3F20] p-12 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#FFF_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#FFF_1px,transparent_1px)] [bg-size:16px_16px]"></div>
         <div className="relative z-10">
           <span className="text-emerald-400 font-bold tracking-widest text-xs uppercase bg-emerald-950/50 px-3 py-1 rounded-full border border-emerald-800/30">
             Project KrishiBodhi

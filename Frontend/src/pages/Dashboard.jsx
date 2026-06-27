@@ -188,7 +188,7 @@ export default function Dashboard({ supervisor, onLogout }) {
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-2xl border border-emerald-100 shadow-sm space-y-3 relative overflow-hidden bg-gradient-to-br from-white to-emerald-50/10">
+              <div className="bg-white p-6 rounded-2xl border border-emerald-100 shadow-sm space-y-3 relative overflow-hidden bg-linear-to-br from-white to-emerald-50/10">
                 <div className="absolute top-0 left-0 w-1.5 h-full bg-emerald-600"></div>
                 <div className="flex items-center space-x-2">
                   <span className="text-xl">🤖</span>
