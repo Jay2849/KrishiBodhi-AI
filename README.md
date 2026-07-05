@@ -54,3 +54,39 @@ npm run dev
 ```
 
 The system will initialize the server instance locally at http://localhost:5173/. Open this link in Google Chrome to inspect the fully responsive viewports.
+
+## 💾 Database Integration & Schema Layout
+
+### Choice of Database: SQLite
+For Month-1 implementation and production staging, **SQLite** was chosen due to its serverless, zero-configuration architecture, allowing rapid data persistent operations without external database connection handling overloads. Data integrity constraints are managed directly via SQLAlchemy session matrices.
+
+### 📊 Entity-Relationship Schema Diagram
+
+Below is the verified relational data flow structural representation demonstrating the **One-to-Many ($1 \rightarrow N$)** relationship mapping between Supervisors and their corresponding Field Diagnostics captures:
+
+```text
+       +-----------------------------------+
+       |            SUPERVISORS            |
+       +-----------------------------------+
+       | id (PK)            [Integer, Inc] | <-------+
+       | intern_id          [String, Uniq] |         |
+       | name               [String]       |         |
+       | email              [String, Uniq] |         |
+       | hashed_password    [String]       |         |
+       | created_at         [Timestamp]    |         |
+       +-----------------------------------+         |
+                                                     | (1 to Many Connection)
+       +-----------------------------------+         |
+       |           FIELD_METRICS           |         |
+       +-----------------------------------+         |
+       | id (PK)            [Integer, Inc] |         |
+       | supervisor_id (FK) [Integer]      | --------+
+       | farmer_name        [String]       |
+       | soil_moisture      [Float]        |
+       | temperature        [Float]        |
+       | nitrogen_level     [Float]        |
+       | phosphorus_level   [Float]        |
+       | potassium_level    [Float]        |
+       | ai_advisory        [Text]         |
+       | timestamp          [Timestamp]    |
+       +-----------------------------------+
