@@ -71,6 +71,61 @@ export default function Dashboard({ supervisor, onLogout }) {
     }
   };
 
+  // ==========================================
+  // 🔄 AXIOS METRICS UPDATE HANDLER (Week 5)
+  // ==========================================
+  const handleUpdateRecord = async (id) => {
+    const updatedName = prompt("Enter updated Farmer Name:", selectedRecord.name);
+    if (!updatedName) return;
+
+    try {
+      const response = await axios.put(`http://localhost:8000/metrics/update/${id}`, {
+        farmer_name: updatedName,
+        soil_moisture: selectedRecord.moisture,
+        nitrogen_level: 45.0, 
+        phosphorus_level: 30.0,
+        potassium_level: 40.0,
+        temperature: selectedRecord.temperature
+      });
+
+      if (response.status === 200) {
+        const updatedList = records.map(rec => 
+          rec.id === id ? { ...rec, name: updatedName } : rec
+        );
+        setRecords(updatedList);
+        setSelectedRecord({ ...selectedRecord, name: updatedName });
+        alert("Record name updated successfully!");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update record on backend.");
+    }
+  };
+
+  // ==========================================
+  // 🗑️ AXIOS METRICS DELETE HANDLER (Week 5)
+  // ==========================================
+  const handleDeleteRecord = async (id) => {
+    if (!confirm("Bhai, kya sach mein is record ko remove karna hai?")) return;
+
+    try {
+      const response = await axios.delete(`http://localhost:8000/metrics/delete/${id}`);
+      if (response.status === 200) {
+        const filteredList = records.filter(rec => rec.id !== id);
+        setRecords(filteredList);
+        if (filteredList.length > 0) {
+          setSelectedRecord(filteredList[0]);
+        } else {
+          setSelectedRecord({ id: 0, name: "No Records", date: "-", moisture: 0, temperature: 0, advisory: "No analytics available." });
+        }
+        alert("Record successfully deleted!");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete record.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F9F9FB] text-gray-800 font-sans antialiased">
       {/* 🟢 Top Control Bar */}
@@ -79,12 +134,19 @@ export default function Dashboard({ supervisor, onLogout }) {
           <h1 className="text-xl font-bold text-[#1E3F20]">KrishiBodhi AI Dashboard</h1>
           <p className="text-xs text-gray-400 font-medium">Welcome, {supervisor?.name || 'Field Supervisor'}</p>
         </div>
-        <button 
-          onClick={() => setShowForm(!showForm)}
-          className="bg-[#1E3F20] hover:bg-[#2e5931] text-white font-medium text-sm px-5 py-2.5 rounded-xl active:scale-95 transition-all shadow-sm"
-        >
-          {showForm ? "View History" : "➕ New Field Metrics"}
-        </button>
+        <div className="flex gap-3">
+          <button 
+            onClick={() => setShowForm(!showForm)}
+            className="bg-[#1E3F20] hover:bg-[#2e5931] text-white font-medium text-sm px-5 py-2.5 rounded-xl active:scale-95 transition-all shadow-sm"
+          >
+            {showForm ? "View History" : "➕ New Field Metrics"}
+          </button>
+          {onLogout && (
+            <button onClick={onLogout} className="text-xs font-semibold text-red-600 hover:text-red-700 transition-colors px-2">
+              Logout
+            </button>
+          )}
+        </div>
       </header>
 
       {/* 📊 Main Content Area */}
@@ -162,6 +224,24 @@ export default function Dashboard({ supervisor, onLogout }) {
                 <div>
                   <span className="text-xs text-gray-400 font-medium">Currently Selected Profiling</span>
                   <h2 className="text-xl font-bold text-gray-900 mt-0.5">{selectedRecord.name}</h2>
+                  
+                  {/* 🛠️ Week 5 Deliverable CRUD Control Panel */}
+                  {selectedRecord.id > 0 && (
+                    <div className="flex gap-2 mt-3">
+                      <button 
+                        onClick={() => handleUpdateRecord(selectedRecord.id)} 
+                        className="bg-amber-500 hover:bg-amber-600 text-white text-xs px-3 py-1.5 rounded-xl transition-all font-semibold shadow-sm"
+                      >
+                        ✏️ Edit Name
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteRecord(selectedRecord.id)} 
+                        className="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded-xl transition-all font-semibold shadow-sm"
+                      >
+                        🗑️ Delete Record
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <div className="text-right text-xs text-gray-400">
                   <p>Log Timestamp</p>

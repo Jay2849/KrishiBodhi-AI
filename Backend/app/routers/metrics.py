@@ -69,3 +69,44 @@ def get_supervisor_metrics(supervisor_id: int, db: Session = Depends(get_db)):
         
     metrics = db.query(models.FieldMetric).filter(models.FieldMetric.supervisor_id == supervisor_id).all()
     return metrics
+# ==========================================
+# 🔄 ROUTE 3: UPDATE FIELD METRICS NAME (Week 5)
+# ==========================================
+@router.put("/update/{metric_id}", status_code=status.HTTP_200_OK)
+def update_field_metric(metric_id: int, payload: dict, db: Session = Depends(get_db)):
+    # Database matrix query lookup
+    metric_query = db.query(models.FieldMetric).filter(models.FieldMetric.id == metric_id)
+    metric = metric_query.first()
+    
+    if not metric:
+        raise HTTPException(status_code=404, detail="Relational telemetry record not found")
+        
+    # Input validation extraction
+    updated_name = payload.get("farmer_name")
+    if not updated_name:
+        raise HTTPException(status_code=400, detail="Farmer name field required for update validation")
+        
+    # Commit update logic to SQLite engine
+    metric.farmer_name = updated_name
+    db.commit()
+    
+    return {"status": "success", "message": "Telemetry entry successfully altered"}
+
+
+# ==========================================
+# 🗑️ ROUTE 4: DELETE FIELD METRICS RECORD (Week 5)
+# ==========================================
+@router.delete("/delete/{metric_id}", status_code=status.HTTP_200_OK)
+def delete_field_metric(metric_id: int, db: Session = Depends(get_db)):
+    # Locate targeted database layer profile
+    metric_query = db.query(models.FieldMetric).filter(models.FieldMetric.id == metric_id)
+    metric = metric_query.first()
+    
+    if not metric:
+        raise HTTPException(status_code=404, detail="Targeted metric entry not found")
+        
+    # Hard drop execution
+    db.delete(metric)
+    db.commit()
+    
+    return {"status": "success", "message": "Record safely purged from persistent database"}
