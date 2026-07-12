@@ -8,16 +8,13 @@ export default function Login({ onLoginSuccess }) {
   const [name, setName] = useState('');
   const [internId, setInternId] = useState('');
   
-  // Error aur loading states handle karne ke liye
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setLoading(false);
 
-    // Basic Form Validation
     if (!email || !password || (isRegister && (!name || !internId))) {
       setError('Bhai, saare fields bharo pehle!');
       return;
@@ -30,14 +27,13 @@ export default function Login({ onLoginSuccess }) {
         // ==========================================
         // 📝 SIGNUP API CALL
         // ==========================================
-        const response = await axios.post('http://localhost:8000/auth/register', {
+        await axios.post('http://localhost:8000/auth/register', {
           name: name,
           intern_id: internId,
           email: email,
           password: password
         });
         
-        // Registration successful hone par automatically Login mode par switch kar do
         alert('Supervisor profile successfully created! Ab login karo bhai.');
         setIsRegister(false);
         setError('');
@@ -50,18 +46,44 @@ export default function Login({ onLoginSuccess }) {
           password: password
         });
 
-        // Successful Login - Data ko App.jsx state matrix mein push karo
-        if (response.data && response.data.supervisor_id) {
+        if (response.data && response.data.access_token) {
+          // Token matrix local persistent vault mein bind karo (Week 6 Security Requirement)
+          localStorage.setItem('token', response.data.access_token);
           onLoginSuccess(response.data);
         }
       }
     } catch (err) {
-      // Backend se jo error detail aayegi, use display karo
       if (err.response && err.response.data && err.response.data.detail) {
         setError(err.response.data.detail);
       } else {
-        setError('Server se connect nahi ho pa raha. Check karo backend live hai na?');
+        setError('Server execution error or Rate Limit Exceeded (429)!');
       }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ==========================================
+  // 🌐 GOOGLE OAUTH FLOW SIMULATION INTERCEPTOR
+  // ==========================================
+  const handleGoogleOAuthLogin = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      console.log("Redirecting system engine to Google OAuth authentication consent module...");
+      
+      const response = await axios.post('http://localhost:8000/auth/oauth/callback', {
+        email: "jay.negi.oauth@krishibodhi.ai",
+        name: "Jay Negi OAuth Supervisor",
+        provider: "google"
+      });
+
+      if (response.data && response.data.access_token) {
+        localStorage.setItem('token', response.data.access_token);
+        onLoginSuccess(response.data);
+      }
+    } catch (err) {
+      setError('OAuth processing gateway validation error. Check backend configurations.');
     } finally {
       setLoading(false);
     }
@@ -100,7 +122,7 @@ export default function Login({ onLoginSuccess }) {
             </p>
           </div>
 
-          {/* ⚠️ Error Alert Banner */}
+          {/* ⚠️ Error Alert Banner / 429 Status Indicator */}
           {error && (
             <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-xl text-xs font-semibold text-red-700 animate-shake">
               ⚠️ {error}
@@ -163,6 +185,30 @@ export default function Login({ onLoginSuccess }) {
               {loading ? "Syncing Engine Matrix..." : isRegister ? "Initialize Supervisor Profile" : "Authenticate & Sync"}
             </button>
           </form>
+
+          {/* ==========================================
+              🌐 OAUTH SIGN-IN TRIGGER LAYOUT BRIDGE
+             ========================================== */}
+          <div className="relative flex py-2 items-center">
+            <div className="flex-grow border-t border-gray-200" />
+            <span className="flex-shrink mx-4 text-gray-400 text-[10px] uppercase font-bold tracking-wider">Or Matrix Connect</span>
+            <div className="flex-grow border-t border-gray-200" />
+          </div>
+
+          <button
+            type="button"
+            onClick={handleGoogleOAuthLogin}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 font-semibold py-3 rounded-xl hover:bg-gray-50 transition-all text-sm shadow-sm"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24">
+              <path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.29 0 3.264 2.69 1.255 6.627l4.01 3.138z"/>
+              <path fill="#4285F4" d="M23.636 12.273c0-.818-.073-1.609-.209-2.373H12v4.582h6.527c-.281 1.49-1.127 2.754-2.39 3.6l3.709 2.873c2.164-1.99 3.41-4.92 3.41-8.682z"/>
+              <path fill="#FBBC05" d="M5.266 14.235A7.015 7.015 0 0 1 4.909 12c0-.79.136-1.545.357-2.235L1.255 6.627A11.933 11.933 0 0 0 0 12c0 1.92.455 3.736 1.255 5.373l4.011-3.138z"/>
+              <path fill="#34A853" d="M12 24c3.245 0 5.973-1.073 7.964-2.918l-3.709-2.873c-1.027.682-2.336 1.091-4.255 1.091-3.264 0-6.036-2.21-7.018-5.173L.973 17.264C2.982 21.209 7.01 24 12 24z"/>
+            </svg>
+            Sign in with Google Account
+          </button>
 
           <div className="text-center text-xs font-medium text-gray-400">
             {isRegister ? "Already tracking operations? " : "New supervisor on the field? "}

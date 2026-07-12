@@ -1,32 +1,37 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Button from './components/ui/Button';
 import Input from './components/ui/Input';
 import Loader from './components/ui/Loader';
 import Toast from './components/ui/Toast';
 import Modal from './components/ui/Modal';
 
-// 🚀 Naye pages import kiye wiring ke liye
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 
 export default function App() {
-  // 🧭 Navigation Controller: Default rakh rahe hain 'login'
-  // Evaluation ke waqt ise 'week3' ya 'dashboard' par toggle kar sakte hain
   const [currentModule, setCurrentModule] = useState('login'); 
   const [supervisor, setSupervisor] = useState(null);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
 
-  // Theme State (Dark/Light)
-  const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem('theme') === 'dark';
-  });
-
-  // UI Components States (Week 3 Original)
   const [toastVisible, setToastVisible] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [inputError, setInputError] = useState('');
 
-  // Handle Theme Toggle
+  // ==========================================
+  // 🛡️ AXIOS AUTHORIZATION INTERCEPTOR HEADERS
+  // ==========================================
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      if (currentModule === 'login') {
+        setCurrentModule('dashboard');
+      }
+    }
+  }, [currentModule]);
+
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
@@ -51,6 +56,25 @@ export default function App() {
     setCurrentModule('dashboard');
   };
 
+  const handleLogout = () => {
+    // Session persistent layer properties clear block
+    localStorage.removeItem('token');
+    delete axios.defaults.headers.common['Authorization'];
+    setSupervisor(null);
+    setCurrentModule('login');
+  };
+
+  // 🛡️ Protected Module Navigation State Guard Validation Check
+  const secureModuleSwitch = (targetModule) => {
+    const activeToken = localStorage.getItem('token');
+    if (!activeToken && (targetModule === 'dashboard' || targetModule === 'week3')) {
+      alert("Unauthorized Access Attempt (401)! Pehle Login Karo Bhaii.");
+      setCurrentModule('login');
+    } else {
+      setCurrentModule(targetModule);
+    }
+  };
+
   return (
     <div className="relative">
       
@@ -58,31 +82,22 @@ export default function App() {
       <div className="bg-slate-900 text-slate-300 text-[11px] px-6 py-2 flex justify-between items-center font-mono border-b border-slate-800 z-50 relative">
         <span>System Module: <strong className="text-emerald-400 font-bold uppercase">{currentModule}</strong></span>
         <div className="flex gap-4">
-          <button onClick={() => setCurrentModule('week3')} className="hover:text-emerald-400 transition-colors">📁 Week 3 UI Library</button>
-          <button onClick={() => setCurrentModule('login')} className="hover:text-emerald-400 transition-colors">🔐 Live Portal</button>
+          <button onClick={() => secureModuleSwitch('week3')} className="hover:text-emerald-400 transition-colors">📁 Week 3 UI Library</button>
+          <button onClick={() => secureModuleSwitch('dashboard')} className="hover:text-emerald-400 transition-colors">📊 Dashboard Layer</button>
+          <button onClick={() => setCurrentModule('login')} className="hover:text-emerald-400 transition-colors">🔐 Live Portal Gate</button>
         </div>
       </div>
 
       {/* 🖥️ DYNAMIC RENDER ROUTING MATRIX */}
       <div>
-        
-        {/* ==========================================
-            🔴 MODULE 1: LIVE PORTAL LOGIN
-           ========================================== */}
         {currentModule === 'login' && (
           <Login onLoginSuccess={handleLoginSuccess} />
         )}
 
-        {/* ==========================================
-            🟢 MODULE 2: EXPERT FIELD DASHBOARD
-           ========================================== */}
         {currentModule === 'dashboard' && (
-          <Dashboard supervisor={supervisor} onLogout={() => setCurrentModule('login')} />
+          <Dashboard supervisor={supervisor} onLogout={handleLogout} />
         )}
 
-        {/* ==========================================
-            📦 MODULE 3: ORIGINAL WEEK 3 EVALUATION DELIVERABLE
-           ========================================== */}
         {currentModule === 'week3' && (
           <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50 transition-colors duration-300">
             {/* HEADER / NAVBAR */}
@@ -90,8 +105,7 @@ export default function App() {
               <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
                 <h1 className="text-xl font-bold text-emerald-600 dark:text-emerald-400">KrishiBodhi AI</h1>
                 <nav className="flex items-center gap-6">
-                  <span className="text-sm font-medium opacity-75 cursor-pointer">Dashboard</span>
-                  <span className="text-sm font-medium opacity-75 cursor-pointer">About</span>
+                  <span onClick={() => secureModuleSwitch('dashboard')} className="text-sm font-medium opacity-75 cursor-pointer hover:text-emerald-400">Dashboard</span>
                   <button 
                     onClick={() => setDarkMode(!darkMode)}
                     className="p-2 rounded-lg bg-slate-200 dark:bg-slate-800 hover:opacity-80 text-lg"
@@ -105,7 +119,6 @@ export default function App() {
 
             {/* MAIN LAYOUT */}
             <main className="max-w-4xl mx-auto px-4 py-10 flex flex-col gap-10">
-              {/* HERO SECTION */}
               <section className="text-center py-6">
                 <h2 className="text-3xl font-extrabold sm:text-4xl tracking-tight text-slate-900 dark:text-white">
                   Week 3 UI Component Library
@@ -115,9 +128,7 @@ export default function App() {
                 </p>
               </section>
 
-              {/* COMPONENT INTERACTION GRID */}
               <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* 1. BUTTONS & LOADER CARD */}
                 <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col gap-4">
                   <h3 className="text-lg font-bold border-b pb-2 border-slate-100 dark:border-slate-800">1. Buttons & Loader Showcase</h3>
                   <div className="flex flex-wrap gap-3">
@@ -133,7 +144,6 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* 2. INPUT FIELD CARD */}
                 <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col gap-4">
                   <h3 className="text-lg font-bold border-b pb-2 border-slate-100 dark:border-slate-800">2. Input Control</h3>
                   <Input 
@@ -145,7 +155,6 @@ export default function App() {
                   />
                 </div>
 
-                {/* 3. MODAL AND TOAST TRIGGERS */}
                 <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col gap-4 md:col-span-2">
                   <h3 className="text-lg font-bold border-b pb-2 border-slate-100 dark:border-slate-800">3. Global Modals & Notifications</h3>
                   <div className="flex gap-4">
@@ -156,7 +165,6 @@ export default function App() {
               </section>
             </main>
 
-            {/* OVERLAY ELEMENTS */}
             <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="System Parameters Verification">
               <p className="mb-4">This action template confirms data synchronization with local high-altitude parameters inside Uttarakhand ecosystems.</p>
               <div className="flex justify-end gap-2">
@@ -172,13 +180,11 @@ export default function App() {
               onClose={() => setToastVisible(false)} 
             />
 
-            {/* FOOTER */}
             <footer className="mt-20 border-t border-slate-200 dark:border-slate-800 text-center py-6 text-xs opacity-60">
-              © 2026 KrishiBodhi AI. Intern Identification: TBI-26100221
+              © 2026 KrishiBodhi AI. Intern Identification Framework Alignment.
             </footer>
           </div>
         )}
-
       </div>
     </div>
   );
