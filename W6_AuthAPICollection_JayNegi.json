@@ -1,0 +1,101 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+		"name": "Project KrishiBodhi AI - Week 6 Auth Matrix",
+		"description": "Core Backend Authentication, Rate Limiting & OAuth simulation validation telemetry endpoints for Graphic Era Hill University placement pipeline evaluation.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Internal Supervisor Registration",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Jay Negi\",\n    \"intern_id\": \"KB-INT-2819\",\n    \"email\": \"supervisor@krishibodhi.ai\",\n    \"password\": \"SecurePass123!\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/auth/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"auth",
+						"register"
+					]
+				},
+				"description": "Initializes a supervisor operational profile inside the centralized relational database network."
+			},
+			"response": []
+		},
+		{
+			"name": "2. Authenticate & Sync (JWT Token Return)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"supervisor@krishibodhi.ai\",\n    \"password\": \"SecurePass123!\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"auth",
+						"login"
+					]
+				},
+				"description": "Validates credentials via bcrypt, checks the 429 rate limiter, and returns a cryptographically signed secure asymmetric JWT bearer access token."
+			},
+			"response": []
+		},
+		{
+			"name": "3. Google OAuth Processing Gateway Simulation",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"jay.negi.oauth@krishibodhi.ai\",\n    \"name\": \"Jay Negi OAuth Supervisor\",\n    \"provider\": \"google\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/auth/oauth/callback",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"auth",
+						"oauth",
+						"callback"
+					]
+				},
+				"description": "Intercepts OAuth provider consent payload data and provisions a dynamic token matrix bridge without manual inputs."
+			},
+			"response": []
+		}
+	]
+}
