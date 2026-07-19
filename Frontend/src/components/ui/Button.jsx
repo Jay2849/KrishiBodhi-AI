@@ -17,7 +17,7 @@ export default function Button({ children, variant = 'primary', isLoading, ...pr
   };
 
   return (
-    <button className={`${baseStyle} ${variants[variant]}`} disabled={isLoading} {...props}>
+    <button sclassName={`${baseStyle} ${variants[variant]}`} disabled={isLoading} {...props}>
       {isLoading && (
         <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
       )}
