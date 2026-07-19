@@ -1,70 +1,116 @@
-# KrishiBodhi AI — Frontend Ecosystem
+# 🌾 KrishiBodhi AI — Precision Agriculture Analytics Platform
 
-A production-ready, highly optimized React frontend skeleton engineered with Vite and Tailwind CSS v4. This interface is specifically architected to serve as a low-latency, responsive agricultural advisory hub tailored for field supervisors operating in the high-altitude terrains of Uttarakhand.
+KrishiBodhi AI is an enterprise-grade, low-latency precision agricultural monitoring and real-time advisory engine. The system is custom-architected to assist field supervisors operating across rural regions and high-altitude terrains (such as Uttarakhand). By capturing localized soil telemetry components, the platform evaluates micro-nutrient imbalances and dynamic environmental variables to generate instant, context-aware agricultural interventions.
 
----
+The ecosystem utilizes a modular architecture consisting of an asynchronous decoupled client interface (React + Vite + Tailwind CSS v4) and a high-performance relational analytics API layer (FastAPI + SQLAlchemy + SQLite), directly reinforced by an isolated generative telemetry processor (Google Gemini-1.5-Flash model mapping).
 
-## 🚀 Architectural Milestones (Week 2 Deliverables)
+========================================================================
+🚀 SYSTEM ARCHITECTURAL PILLARS & CORE FUNCTIONALITY
+========================================================================
+* Multi-Node Network Pipeline: Decouples core analytical evaluation workloads from client devices, enabling rapid execution loops over low-bandwidth constraints (2G/3G connectivity profiles).
+* Asynchronous Non-Blocking Telemetry: Handles bulk structural soil metric inputs without locking thread lifecycles, guaranteeing smooth interactive interfaces.
+* Secure Sandboxed Environment: Manages authorization tokens and application endpoints separate from code version tracks, mitigating telemetry token data leaks.
+* Intelligent Generative Diagnostics: Replaces traditional static hardcoded rule sets with contextual recommendation engines that adapt crop logs into deterministic agronomy reports.
 
-- **Vite & React Integration:** Initialized a lightweight Single Page Application (SPA) utilizing Vite for instant Hot Module Replacement (HMR) and optimized building.
-- **Tailwind CSS v4 Configuration:** Successfully implemented and verified Tailwind v4 utility constraints using a PostCSS compatibility layout layer (`@tailwindcss/postcss`).
-- **Semantic Components:** Engineered clean, modular UI layers including a persistent `Navbar`, high-impact `Hero` segment, multi-pillar layout grids (`Cards`), and a strict safety liability disclaimer `Footer`.
-- **Low-Bandwidth Optimization:** Designed entirely with standard web components to guarantee smooth runtime compilation and visual layout rendering across patchy 2G/3G network infrastructure.
-
----
-
-## 📁 Repository Directory Structure
-
-The workspace has been organized cleanly to separate client interfaces from future analytical engines:
-
-```text
+========================================================================
+📁 REPOSITORY STRUCTURE & INDIVIDUAL MODULE OVERVIEW
+========================================================================
 KrishiBodhi AI/
-├── .gitignore                # Restricts build artifacts & node_modules from being tracked
-├── README.md                 # Primary repository documentation overview
-├── Frontend/                 # Core Client-Side Web Application (React + Vite)
-│   ├── public/               # Static vector resources & icons
-│   ├── src/
-│   │   ├── components/       # Layout blocks (Navbar.jsx, Hero.jsx, Card.jsx, Footer.jsx)
-│   │   ├── pages/            # View Endpoints (Home.jsx, About.jsx, Dashboard.jsx, Login.jsx)
-│   │   ├── App.jsx           # Routing Matrix & Entry Point Configuration
-│   │   ├── index.css         # Global layer directives & Tailwind imports
-│   │   └── main.jsx          # Application mounting sequence
-│   ├── index.html            # Primary DOM Entry Document
-│   ├── package.json          # Dependency manifestations & build scripts
-│   └── postcss.config.js     # PostCSS styling compilation plugins
-└── Backend/                  # Reserved space for future ML models & API routes
-```
+├── .gitignore                # Global rules restricting environment secrets and build items
+├── README.md                 # Primary system structural documentation portal
+├── PROMPTS.md                # System prompt logs and variant telemetry matrices
+├── requirements.txt          # Root Python baseline packages manifest
+├── krishibodhi.db            # Active SQLite relational persistent binary storage
+│
+├── Backend/                  # API Subsystem & Core Relational Analytics Router
+│   ├── .env                  # Runtime environmental keys (API credentials container)
+│   ├── requirements.txt      # API package dependencies manifest (FastAPI, Uvicorn, Dotenv)
+│   └── app/
+│       ├── main.py           # Application entry, CORS controls, and routing aggregation
+│       ├── database.py       # Connection handling and SQLAlchemy session pool managers
+│       ├── models.py         # Relational DB entities mapping physical storage spaces
+│       ├── schemas.py        # Pydantic structural schema profiles validating JSON states
+│       ├── security.py       # Password cryptographic salting and active session security
+│       └── routers/          # Distributed core business logic endpoints
+│           ├── ai.py         # Gemini generative backend logic and token handlers
+│           ├── auth.py       # Field supervisor verification and profile management
+│           └── metrics.py    # CRUD processing rules for crop health monitoring logs
+│
+└── Frontend/                 # Responsive Client Presentation Web Application
+    ├── index.html            # Core structural DOM mounting anchor
+    ├── package.json          # Node dependency configurations and system lifecycle scripts
+    └── src/
+        ├── main.jsx          # V8 compiler entry point mounting the global DOM
+        ├── App.jsx           # Global component routing matrix and structural view controls
+        ├── index.css         # Global layer bindings and Tailwind styling injections
+        ├── App.css           # Component explicit design layout modifications
+        ├── context/          # State engines tracking supervisor sessions
+        │   └── AuthContext.jsx
+        ├── pages/            # Client View interfaces for structural components
+        │   ├── Home.jsx      # Portal public engagement index
+        │   ├── About.jsx     # Technical overview context display
+        │   ├── Login.jsx     # Supervisor access validation matrix
+        │   └── Dashboard.jsx # Active monitoring field controls and AI panel
+        └── components/       # Reusable layout building components
+            ├── Navbar.jsx    # Persistent horizontal routing header
+            ├── Hero.jsx      # High-impact user engagement banner
+            ├── Card.jsx      # Diagnostic records display layout item
+            ├── Footer.jsx    # Regulatory compliance liability disclaimer panel
+            ├── ProtectedRoute.jsx  # Authentication state route interceptor
+            └── ui/           # Atomic primitive atomic styling entities
+                ├── Button.jsx  ├── Index.js   ├── Input.jsx
+                ├── Loader.jsx  ├── Modal.jsx  └── Toast.jsx
 
-## 💻 Local Installation & Server Instantiation
-To duplicate and execution-test this framework locally, run the following parameters inside your terminal sequence:
+========================================================================
+💻 ENVIRONMENT PROVISIONING & PRODUCTION BOOTSTRAPPING
+========================================================================
+Follow this explicit sequence to instantiate the multi-tiered ecosystem locally:
 
-1. Change Environment Directory
-```
-cd Frontend
-```
+------------------------------------------------------------------------
+STEP 1: ENVIRONMENT CREDENTIALS CONFIGURATION
+------------------------------------------------------------------------
+Create a custom isolated environment variable structure inside the 'Backend/' root:
+File Location: Backend/.env
+Content Schema:
+  GEMINI_API_KEY="your_private_google_ai_studio_access_key"
 
-2. Verify Dependency Installation
-```
-npm install
-```
+------------------------------------------------------------------------
+STEP 2: RUNNING THE RELATIONAL API SUB-ENGINE (BACKEND)
+------------------------------------------------------------------------
+Open a terminal shell block and route into the server workspace directory:
+  $ cd Backend
 
-3. Launch Development Server
-```
-npm run dev
-```
+Activate your virtual environment and install standard requirements:
+  $ pip install -r requirements.txt
 
-The system will initialize the server instance locally at http://localhost:5173/. Open this link in Google Chrome to inspect the fully responsive viewports.
+Instantiate the asynchronous Uvicorn routing server process:
+  $ uvicorn app.main:app --reload
 
-## 💾 Database Integration & Schema Layout
+* System Telemetry Verification Link: http://127.0.0.1:8000/docs
+* Confirm that the backend live console returns: "Uvicorn running on http://127.0.0.1:8000"
 
-### Choice of Database: SQLite
-For Month-1 implementation and production staging, **SQLite** was chosen due to its serverless, zero-configuration architecture, allowing rapid data persistent operations without external database connection handling overloads. Data integrity constraints are managed directly via SQLAlchemy session matrices.
+------------------------------------------------------------------------
+STEP 3: RUNNING THE REACT INTERACTION SYSTEM (FRONTEND)
+------------------------------------------------------------------------
+Open a new parallel terminal instance window, leaving the backend process active:
+  $ cd Frontend
 
-### 📊 Entity-Relationship Schema Diagram
+Install the required node module dependencies:
+  $ npm install
 
-Below is the verified relational data flow structural representation demonstrating the **One-to-Many ($1 \rightarrow N$)** relationship mapping between Supervisors and their corresponding Field Diagnostics captures:
+Launch the frontend development engine:
+  $ npm run dev
 
-```text
+* Client Application Local Mount Link: http://localhost:5173/
+* Open the local interface link inside Chrome to view responsive layouts.
+
+========================================================================
+💾 DATA MATRIX PERSISTENCE LAYER & RELATION DIAGRAM
+========================================================================
+* Storage Infrastructure: SQLite engine deployed serverless for instant IO operations.
+* Data Layer Enforcement: Orchestrated via declarative object-relational mapping (ORM).
+* Entity Relation Bounds: Maps a 1-to-Many connection flow where an authenticated field supervisor captures multiple diagnostic metrics loops.
+
        +-----------------------------------+
        |            SUPERVISORS            |
        +-----------------------------------+
@@ -90,3 +136,14 @@ Below is the verified relational data flow structural representation demonstrati
        | ai_advisory        [Text]         |
        | timestamp          [Timestamp]    |
        +-----------------------------------+
+
+========================================================================
+🤖 COGNITIVE ARTIFICIAL INTELLIGENCE INFERENCE FLOW
+========================================================================
+1. Input Parsing: Field supervisor enters diagnostic indicators (Moisture, Temp, N-P-K metrics).
+2. Data Serialization: Client component transforms fields into unified JSON payloads via Axios.
+3. Network Routing: Requests transit to the Backend endpoint "/metrics/submit".
+4. Isolated Model Intercept: Server extracts runtime values and builds strict tokens.
+5. Generative Processing: Google Gemini processes prompts under optimization constraints.
+6. Dynamic UI Rendering: Frontend intercepts response streams, halts loading states, and updates dashboard cards with custom recommendations.
+========================================================================
