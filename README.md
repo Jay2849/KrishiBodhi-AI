@@ -7,6 +7,7 @@ The ecosystem utilizes a modular architecture consisting of an asynchronous deco
 =====================================================
 🚀 SYSTEM ARCHITECTURAL PILLARS & CORE FUNCTIONALITY
 =====================================================
+
 * Multi-Node Network Pipeline: Decouples core analytical evaluation workloads from client devices, enabling rapid execution loops over low-bandwidth constraints (2G/3G connectivity profiles).
 * Asynchronous Non-Blocking Telemetry: Handles bulk structural soil metric inputs without locking thread lifecycles, guaranteeing smooth interactive interfaces.
 * Secure Sandboxed Environment: Manages authorization tokens and application endpoints separate from code version tracks, mitigating telemetry token data leaks.
@@ -15,6 +16,7 @@ The ecosystem utilizes a modular architecture consisting of an asynchronous deco
 =====================================================
 📁 REPOSITORY STRUCTURE & INDIVIDUAL MODULE OVERVIEW
 =====================================================
+
 KrishiBodhi AI/
 ├── .gitignore                # Global rules restricting environment secrets and build items
 ├── README.md                 # Primary system structural documentation portal
@@ -64,6 +66,7 @@ KrishiBodhi AI/
 =======================================================
 💻 ENVIRONMENT PROVISIONING & PRODUCTION BOOTSTRAPPING
 =======================================================
+
 Follow this explicit sequence to instantiate the multi-tiered ecosystem locally:
 
 ----------------------------------------------
@@ -77,6 +80,7 @@ Content Schema:
 -------------------------------------------------------
 STEP 2: RUNNING THE RELATIONAL API SUB-ENGINE (BACKEND)
 -------------------------------------------------------
+
 Open a terminal shell block and route into the server workspace directory:
   $ cd Backend
 
@@ -92,6 +96,7 @@ Instantiate the asynchronous Uvicorn routing server process:
 -------------------------------------------------------
 STEP 3: RUNNING THE REACT INTERACTION SYSTEM (FRONTEND)
 -------------------------------------------------------
+
 Open a new parallel terminal instance window, leaving the backend process active:
   $ cd Frontend
 
@@ -107,6 +112,7 @@ Launch the frontend development engine:
 ====================================================
 💾 DATA MATRIX PERSISTENCE LAYER & RELATION DIAGRAM
 ====================================================
+
 * Storage Infrastructure: SQLite engine deployed serverless for instant IO operations.
 * Data Layer Enforcement: Orchestrated via declarative object-relational mapping (ORM).
 * Entity Relation Bounds: Maps a 1-to-Many connection flow where an authenticated field supervisor captures multiple diagnostic metrics loops.
@@ -140,6 +146,7 @@ Launch the frontend development engine:
 ====================================================
 🤖 COGNITIVE ARTIFICIAL INTELLIGENCE INFERENCE FLOW
 ====================================================
+
 1. Input Parsing: Field supervisor enters diagnostic indicators (Moisture, Temp, N-P-K metrics).
 2. Data Serialization: Client component transforms fields into unified JSON payloads via Axios.
 3. Network Routing: Requests transit to the Backend endpoint "/metrics/submit".
