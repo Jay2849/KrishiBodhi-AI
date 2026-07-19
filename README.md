@@ -4,17 +4,17 @@ KrishiBodhi AI is an enterprise-grade, low-latency precision agricultural monito
 
 The ecosystem utilizes a modular architecture consisting of an asynchronous decoupled client interface (React + Vite + Tailwind CSS v4) and a high-performance relational analytics API layer (FastAPI + SQLAlchemy + SQLite), directly reinforced by an isolated generative telemetry processor (Google Gemini-1.5-Flash model mapping).
 
-========================================================================
+=====================================================
 🚀 SYSTEM ARCHITECTURAL PILLARS & CORE FUNCTIONALITY
-========================================================================
+=====================================================
 * Multi-Node Network Pipeline: Decouples core analytical evaluation workloads from client devices, enabling rapid execution loops over low-bandwidth constraints (2G/3G connectivity profiles).
 * Asynchronous Non-Blocking Telemetry: Handles bulk structural soil metric inputs without locking thread lifecycles, guaranteeing smooth interactive interfaces.
 * Secure Sandboxed Environment: Manages authorization tokens and application endpoints separate from code version tracks, mitigating telemetry token data leaks.
 * Intelligent Generative Diagnostics: Replaces traditional static hardcoded rule sets with contextual recommendation engines that adapt crop logs into deterministic agronomy reports.
 
-========================================================================
+=====================================================
 📁 REPOSITORY STRUCTURE & INDIVIDUAL MODULE OVERVIEW
-========================================================================
+=====================================================
 KrishiBodhi AI/
 ├── .gitignore                # Global rules restricting environment secrets and build items
 ├── README.md                 # Primary system structural documentation portal
@@ -61,22 +61,22 @@ KrishiBodhi AI/
                 ├── Button.jsx  ├── Index.js   ├── Input.jsx
                 ├── Loader.jsx  ├── Modal.jsx  └── Toast.jsx
 
-========================================================================
+=======================================================
 💻 ENVIRONMENT PROVISIONING & PRODUCTION BOOTSTRAPPING
-========================================================================
+=======================================================
 Follow this explicit sequence to instantiate the multi-tiered ecosystem locally:
 
-------------------------------------------------------------------------
+----------------------------------------------
 STEP 1: ENVIRONMENT CREDENTIALS CONFIGURATION
-------------------------------------------------------------------------
+----------------------------------------------
 Create a custom isolated environment variable structure inside the 'Backend/' root:
 File Location: Backend/.env
 Content Schema:
   GEMINI_API_KEY="your_private_google_ai_studio_access_key"
 
-------------------------------------------------------------------------
+-------------------------------------------------------
 STEP 2: RUNNING THE RELATIONAL API SUB-ENGINE (BACKEND)
-------------------------------------------------------------------------
+-------------------------------------------------------
 Open a terminal shell block and route into the server workspace directory:
   $ cd Backend
 
@@ -89,9 +89,9 @@ Instantiate the asynchronous Uvicorn routing server process:
 * System Telemetry Verification Link: http://127.0.0.1:8000/docs
 * Confirm that the backend live console returns: "Uvicorn running on http://127.0.0.1:8000"
 
-------------------------------------------------------------------------
+-------------------------------------------------------
 STEP 3: RUNNING THE REACT INTERACTION SYSTEM (FRONTEND)
-------------------------------------------------------------------------
+-------------------------------------------------------
 Open a new parallel terminal instance window, leaving the backend process active:
   $ cd Frontend
 
@@ -104,9 +104,9 @@ Launch the frontend development engine:
 * Client Application Local Mount Link: http://localhost:5173/
 * Open the local interface link inside Chrome to view responsive layouts.
 
-========================================================================
+====================================================
 💾 DATA MATRIX PERSISTENCE LAYER & RELATION DIAGRAM
-========================================================================
+====================================================
 * Storage Infrastructure: SQLite engine deployed serverless for instant IO operations.
 * Data Layer Enforcement: Orchestrated via declarative object-relational mapping (ORM).
 * Entity Relation Bounds: Maps a 1-to-Many connection flow where an authenticated field supervisor captures multiple diagnostic metrics loops.
@@ -137,9 +137,9 @@ Launch the frontend development engine:
        | timestamp          [Timestamp]    |
        +-----------------------------------+
 
-========================================================================
+====================================================
 🤖 COGNITIVE ARTIFICIAL INTELLIGENCE INFERENCE FLOW
-========================================================================
+====================================================
 1. Input Parsing: Field supervisor enters diagnostic indicators (Moisture, Temp, N-P-K metrics).
 2. Data Serialization: Client component transforms fields into unified JSON payloads via Axios.
 3. Network Routing: Requests transit to the Backend endpoint "/metrics/submit".
