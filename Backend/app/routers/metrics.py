@@ -100,7 +100,7 @@ def get_supervisor_metrics(
 
 
 # ==========================================
-# 🔄 ROUTE 3: UPDATE FIELD METRICS NAME (🛡️ PROTECTED)
+# 🔄 ROUTE 3: UPDATE FIELD METRICS RECORD (🛡️ PROTECTED)
 # ==========================================
 @router.put("/update/{metric_id}", status_code=status.HTTP_200_OK)
 def update_field_metric(
@@ -119,15 +119,63 @@ def update_field_metric(
     if not metric:
         raise HTTPException(status_code=404, detail="Relational telemetry record not found or access denied")
         
+    param_changed = False
+
     updated_name = payload.get("farmer_name")
     if updated_name:
         metric.farmer_name = updated_name
         
     if "soil_moisture" in payload and payload["soil_moisture"] is not None:
         metric.soil_moisture = float(payload["soil_moisture"])
+        param_changed = True
     if "temperature" in payload and payload["temperature"] is not None:
         metric.temperature = float(payload["temperature"])
-        
+        param_changed = True
+    if "nitrogen_level" in payload and payload["nitrogen_level"] is not None:
+        metric.nitrogen_level = float(payload["nitrogen_level"])
+        param_changed = True
+    if "phosphorus_level" in payload and payload["phosphorus_level"] is not None:
+        metric.phosphorus_level = float(payload["phosphorus_level"])
+        param_changed = True
+    if "potassium_level" in payload and payload["potassium_level"] is not None:
+        metric.potassium_level = float(payload["potassium_level"])
+        param_changed = True
+
+    # Re-evaluate advisory if parameters changed
+    if param_changed:
+        recommendation = ""
+        if API_KEY:
+            try:
+                model = genai.GenerativeModel(
+                    model_name="gemini-1.5-flash",
+                    generation_config={"max_output_tokens": 120}
+                )
+                prompt = (
+                    f"Act as an agronomy expert. Based on soil moisture ({metric.soil_moisture}%), "
+                    f"temperature ({metric.temperature}°C), Nitrogen ({metric.nitrogen_level}), "
+                    f"Phosphorus ({metric.phosphorus_level}), and Potassium ({metric.potassium_level}), "
+                    f"generate a concise 2-sentence structural advisory block for the dashboard. "
+                    f"Format strictly as: **Status Alert:** [problem statement], **Action Required:** [precise mitigation solution]."
+                )
+                response = model.generate_content(prompt)
+                if response and response.text:
+                    recommendation = response.text.strip()
+            except Exception as e:
+                print(f"Gemini API fallback triggered on update: {e}")
+
+        if not recommendation:
+            if metric.soil_moisture < 30.0:
+                recommendation += "**Status Alert:** Critical field dehydration detected at low moisture level. "
+            else:
+                recommendation += "**Status Alert:** Soil moisture levels are optimal for local high-altitude crops. "
+                
+            if metric.nitrogen_level < 20.0:
+                recommendation += "**Action Required:** Nitrogen deficiency observed. Apply organic compost or Urea immediately."
+            else:
+                recommendation += "**Action Required:** Maintain balanced NPK nutrient supply and standard watering cycles."
+
+        metric.ai_advisory = recommendation
+
     db.commit()
     db.refresh(metric)
     
@@ -139,6 +187,9 @@ def update_field_metric(
             "farmer_name": metric.farmer_name,
             "soil_moisture": metric.soil_moisture,
             "temperature": metric.temperature,
+            "nitrogen_level": metric.nitrogen_level,
+            "phosphorus_level": metric.phosphorus_level,
+            "potassium_level": metric.potassium_level,
             "ai_advisory": metric.ai_advisory,
             "timestamp": metric.timestamp,
             "supervisor_id": metric.supervisor_id
