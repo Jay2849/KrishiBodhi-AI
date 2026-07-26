@@ -47,8 +47,8 @@ export default function Login({ onLoginSuccess }) {
         });
 
         if (response.data && response.data.access_token) {
-          // Token matrix local persistent vault mein bind karo (Week 6 Security Requirement)
           localStorage.setItem('token', response.data.access_token);
+          axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`;
           onLoginSuccess(response.data);
         }
       }
@@ -80,6 +80,7 @@ export default function Login({ onLoginSuccess }) {
 
       if (response.data && response.data.access_token) {
         localStorage.setItem('token', response.data.access_token);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`;
         onLoginSuccess(response.data);
       }
     } catch (err) {

@@ -30,7 +30,7 @@ export default function App() {
         setCurrentModule('dashboard');
       }
     }
-  }, [currentModule]);
+  }, []);
 
   useEffect(() => {
     if (darkMode) {
