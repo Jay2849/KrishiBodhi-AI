@@ -4,6 +4,9 @@ export default function EditModal({ isOpen, onClose, record, onSave }) {
   const [farmerName, setFarmerName] = useState('');
   const [moisture, setMoisture] = useState('');
   const [temp, setTemp] = useState('');
+  const [nitrogen, setNitrogen] = useState('');
+  const [phosphorus, setPhosphorus] = useState('');
+  const [potassium, setPotassium] = useState('');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -11,6 +14,9 @@ export default function EditModal({ isOpen, onClose, record, onSave }) {
       setFarmerName(record.name || record.farmer_name || '');
       setMoisture(record.moisture !== undefined ? record.moisture : record.soil_moisture || '');
       setTemp(record.temperature !== undefined ? record.temperature : record.temperature || '');
+      setNitrogen(record.nitrogen !== undefined ? record.nitrogen : record.nitrogen_level || '');
+      setPhosphorus(record.phosphorus !== undefined ? record.phosphorus : record.phosphorus_level || '');
+      setPotassium(record.potassium !== undefined ? record.potassium : record.potassium_level || '');
     }
   }, [record]);
 
@@ -26,7 +32,10 @@ export default function EditModal({ isOpen, onClose, record, onSave }) {
     await onSave(record.id, {
       farmer_name: farmerName,
       soil_moisture: parseFloat(moisture),
-      temperature: parseFloat(temp)
+      temperature: parseFloat(temp),
+      nitrogen_level: nitrogen !== '' ? parseFloat(nitrogen) : undefined,
+      phosphorus_level: phosphorus !== '' ? parseFloat(phosphorus) : undefined,
+      potassium_level: potassium !== '' ? parseFloat(potassium) : undefined,
     });
     setSaving(false);
     onClose();
@@ -37,7 +46,7 @@ export default function EditModal({ isOpen, onClose, record, onSave }) {
       <div className="bg-white rounded-2xl shadow-xl border border-gray-100 max-w-md w-full p-6 space-y-5">
         <div className="flex justify-between items-center border-b border-gray-100 pb-3">
           <h3 className="text-lg font-bold text-gray-900">✏️ Edit Field Evaluation</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-sm font-bold">✕</button>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-sm font-bold cursor-pointer">✕</button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -61,6 +70,7 @@ export default function EditModal({ isOpen, onClose, record, onSave }) {
                 value={moisture}
                 onChange={(e) => setMoisture(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm"
+                required
               />
             </div>
             <div className="space-y-1">
@@ -71,6 +81,40 @@ export default function EditModal({ isOpen, onClose, record, onSave }) {
                 value={temp}
                 onChange={(e) => setTemp(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-gray-400 uppercase">Nitrogen (N)</label>
+              <input
+                type="number"
+                step="any"
+                value={nitrogen}
+                onChange={(e) => setNitrogen(e.target.value)}
+                className="w-full px-2 py-1.5 border border-gray-200 rounded-xl text-center text-sm"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-gray-400 uppercase">Phosphorus (P)</label>
+              <input
+                type="number"
+                step="any"
+                value={phosphorus}
+                onChange={(e) => setPhosphorus(e.target.value)}
+                className="w-full px-2 py-1.5 border border-gray-200 rounded-xl text-center text-sm"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-gray-400 uppercase">Potassium (K)</label>
+              <input
+                type="number"
+                step="any"
+                value={potassium}
+                onChange={(e) => setPotassium(e.target.value)}
+                className="w-full px-2 py-1.5 border border-gray-200 rounded-xl text-center text-sm"
               />
             </div>
           </div>
@@ -79,14 +123,14 @@ export default function EditModal({ isOpen, onClose, record, onSave }) {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-xs font-semibold text-gray-500 hover:bg-gray-100 transition-all"
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-gray-500 hover:bg-gray-100 transition-all cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="bg-[#1E3F20] hover:bg-[#2e5931] text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition-all shadow-sm disabled:opacity-50"
+              className="bg-[#1E3F20] hover:bg-[#2e5931] text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition-all shadow-sm disabled:opacity-50 cursor-pointer"
             >
               {saving ? "Saving..." : "Save Changes"}
             </button>

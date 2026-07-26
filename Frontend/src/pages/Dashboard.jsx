@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import EmptyState from '../components/EmptyState';
 import EditModal from '../components/EditModal';
 
@@ -8,6 +8,9 @@ export default function Dashboard({ supervisor, onLogout }) {
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [loadingRecords, setLoadingRecords] = useState(true);
+
+  // Search / Filter State
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Edit Modal State
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -26,23 +29,13 @@ export default function Dashboard({ supervisor, onLogout }) {
   const [errorMessage, setErrorMessage] = useState('');
   const [successToast, setSuccessToast] = useState('');
 
-  // Helper to ensure Bearer Authorization Token is always attached
-  const getAuthConfig = () => {
-    const token = localStorage.getItem('token');
-    return {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    };
-  };
-
   // ==========================================
   // 📥 READ (GET): FETCH REAL METRICS FROM API
   // ==========================================
   const loadSupervisorMetrics = async () => {
     setLoadingRecords(true);
     try {
-      const response = await axios.get('http://localhost:8000/metrics/supervisor/me', getAuthConfig());
+      const response = await api.get('/metrics/supervisor/me');
       if (response.data && Array.isArray(response.data)) {
         const formatted = response.data.map(item => ({
           id: item.id,
@@ -50,6 +43,9 @@ export default function Dashboard({ supervisor, onLogout }) {
           date: new Date(item.timestamp).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
           moisture: item.soil_moisture,
           temperature: item.temperature,
+          nitrogen: item.nitrogen_level,
+          phosphorus: item.phosphorus_level,
+          potassium: item.potassium_level,
           advisory: item.ai_advisory || "AI Analytics Complete."
         }));
         setRecords(formatted);
@@ -75,6 +71,11 @@ export default function Dashboard({ supervisor, onLogout }) {
     setTimeout(() => setSuccessToast(''), 4000);
   };
 
+  // Filtered records by search query
+  const filteredRecords = records.filter(rec =>
+    rec.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   // ==========================================
   // 📝 CREATE (POST): SUBMIT FIELD METRICS & GEMINI AI ADVISORY
   // ==========================================
@@ -89,14 +90,14 @@ export default function Dashboard({ supervisor, onLogout }) {
     setErrorMessage('');
 
     try {
-      const response = await axios.post('http://localhost:8000/metrics/submit', {
+      const response = await api.post('/metrics/submit', {
         farmer_name: farmerName,
         soil_moisture: parseFloat(moisture),
         nitrogen_level: parseFloat(nitrogen),
         phosphorus_level: parseFloat(phosphorus),
         potassium_level: parseFloat(potassium),
         temperature: parseFloat(temp)
-      }, getAuthConfig());
+      });
 
       if (response.data && response.data.id) {
         const newRecord = {
@@ -105,6 +106,9 @@ export default function Dashboard({ supervisor, onLogout }) {
           date: new Date(response.data.timestamp).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
           moisture: response.data.soil_moisture,
           temperature: response.data.temperature,
+          nitrogen: response.data.nitrogen_level,
+          phosphorus: response.data.phosphorus_level,
+          potassium: response.data.potassium_level,
           advisory: response.data.ai_advisory || "AI Processing successful."
         };
 
@@ -119,8 +123,12 @@ export default function Dashboard({ supervisor, onLogout }) {
       }
     } catch (err) {
       console.error("AI Submission Error:", err);
-      const extractedError = err.response?.data?.detail || "AI Engine Gateway offline or network error.";
-      setErrorMessage(extractedError);
+      if (err.response?.status === 401) {
+        setErrorMessage("Your security session token has expired. Please re-login to get a fresh token.");
+      } else {
+        const extractedError = err.response?.data?.detail || "AI Engine Gateway offline or network error.";
+        setErrorMessage(extractedError);
+      }
     } finally {
       setLoading(false);
     }
@@ -136,15 +144,20 @@ export default function Dashboard({ supervisor, onLogout }) {
 
   const handleSaveEditedRecord = async (id, updatedData) => {
     try {
-      const response = await axios.put(`http://localhost:8000/metrics/update/${id}`, updatedData, getAuthConfig());
+      const response = await api.put(`/metrics/update/${id}`, updatedData);
       if (response.status === 200) {
+        const recData = response.data.record || {};
         const updatedList = records.map(rec => {
           if (rec.id === id) {
             return {
               ...rec,
               name: updatedData.farmer_name || rec.name,
               moisture: updatedData.soil_moisture !== undefined ? updatedData.soil_moisture : rec.moisture,
-              temperature: updatedData.temperature !== undefined ? updatedData.temperature : rec.temperature
+              temperature: updatedData.temperature !== undefined ? updatedData.temperature : rec.temperature,
+              nitrogen: updatedData.nitrogen_level !== undefined ? updatedData.nitrogen_level : rec.nitrogen,
+              phosphorus: updatedData.phosphorus_level !== undefined ? updatedData.phosphorus_level : rec.phosphorus,
+              potassium: updatedData.potassium_level !== undefined ? updatedData.potassium_level : rec.potassium,
+              advisory: recData.ai_advisory || rec.advisory
             };
           }
           return rec;
@@ -155,7 +168,11 @@ export default function Dashboard({ supervisor, onLogout }) {
             ...selectedRecord,
             name: updatedData.farmer_name || selectedRecord.name,
             moisture: updatedData.soil_moisture !== undefined ? updatedData.soil_moisture : selectedRecord.moisture,
-            temperature: updatedData.temperature !== undefined ? updatedData.temperature : selectedRecord.temperature
+            temperature: updatedData.temperature !== undefined ? updatedData.temperature : selectedRecord.temperature,
+            nitrogen: updatedData.nitrogen_level !== undefined ? updatedData.nitrogen_level : selectedRecord.nitrogen,
+            phosphorus: updatedData.phosphorus_level !== undefined ? updatedData.phosphorus_level : selectedRecord.phosphorus,
+            potassium: updatedData.potassium_level !== undefined ? updatedData.potassium_level : selectedRecord.potassium,
+            advisory: recData.ai_advisory || selectedRecord.advisory
           });
         }
         triggerToast("✏️ Record successfully updated in database!");
@@ -173,7 +190,7 @@ export default function Dashboard({ supervisor, onLogout }) {
     if (!confirm("Are you sure you want to permanently purge this evaluation record?")) return;
 
     try {
-      const response = await axios.delete(`http://localhost:8000/metrics/delete/${id}`, getAuthConfig());
+      const response = await api.delete(`/metrics/delete/${id}`);
       if (response.status === 200) {
         const filteredList = records.filter(rec => rec.id !== id);
         setRecords(filteredList);
@@ -188,6 +205,40 @@ export default function Dashboard({ supervisor, onLogout }) {
       console.error(err);
       alert("Failed to delete record from backend.");
     }
+  };
+
+  // Helper function to format AI Advisory markdown into styled UI blocks
+  const renderFormattedAdvisory = (advisoryText) => {
+    if (!advisoryText) return null;
+
+    const parts = advisoryText.split(/(?=\*\*(?:Status Alert|Action Required):\*\*)/gi);
+    
+    return (
+      <div className="space-y-3 mt-2">
+        {parts.map((part, index) => {
+          const isAlert = part.toLowerCase().includes("status alert");
+          const isAction = part.toLowerCase().includes("action required");
+          const cleanText = part.replace(/\*\*(?:Status Alert|Action Required):\*\*/gi, '').trim();
+
+          if (isAlert) {
+            return (
+              <div key={index} className="p-3 bg-amber-50 border-l-4 border-amber-500 rounded-r-xl text-xs text-amber-900 font-medium leading-relaxed">
+                <span className="font-bold text-amber-950 uppercase text-[10px] tracking-wide block mb-1">⚠️ Status Alert</span>
+                {cleanText}
+              </div>
+            );
+          } else if (isAction) {
+            return (
+              <div key={index} className="p-3 bg-emerald-50 border-l-4 border-emerald-600 rounded-r-xl text-xs text-emerald-900 font-medium leading-relaxed">
+                <span className="font-bold text-emerald-950 uppercase text-[10px] tracking-wide block mb-1">💡 Action Required</span>
+                {cleanText}
+              </div>
+            );
+          }
+          return cleanText ? <p key={index} className="text-xs text-gray-600">{cleanText}</p> : null;
+        })}
+      </div>
+    );
   };
 
   return (
@@ -241,14 +292,28 @@ export default function Dashboard({ supervisor, onLogout }) {
                 <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Recent Evaluations</h2>
                 <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">{records.length} Total</span>
               </div>
+
+              {/* 🔍 Search Input Filter */}
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search farmer name..."
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl bg-white text-xs focus:outline-none focus:border-[#1E3F20] transition-all"
+                />
+                {searchQuery && (
+                  <button onClick={() => setSearchQuery('')} className="absolute right-3 top-2.5 text-xs text-gray-400 hover:text-gray-600">✕</button>
+                )}
+              </div>
               
-              <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-180px)] pr-1">
-                {records.length === 0 ? (
+              <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-230px)] pr-1">
+                {filteredRecords.length === 0 ? (
                   <div className="p-6 bg-white border border-gray-100 rounded-2xl text-center text-xs text-gray-400">
-                    No field evaluations found. Click "+ New Field Metrics" to begin.
+                    {searchQuery ? `No evaluations match "${searchQuery}"` : 'No field evaluations found. Click "+ New Field Metrics" to begin.'}
                   </div>
                 ) : (
-                  records.map((item) => (
+                  filteredRecords.map((item) => (
                     <div 
                       key={item.id}
                       onClick={() => setSelectedRecord(item)}
@@ -283,8 +348,13 @@ export default function Dashboard({ supervisor, onLogout }) {
                   </div>
                   
                   {errorMessage && (
-                    <div className="p-4 bg-red-50 text-red-700 rounded-xl border border-red-200 text-sm">
-                      ❌ <strong>AI Sync Alert:</strong> {errorMessage}
+                    <div className="p-4 bg-red-50 text-red-700 rounded-xl border border-red-200 text-sm flex justify-between items-center gap-3">
+                      <div>❌ <strong>AI Sync Alert:</strong> {errorMessage}</div>
+                      {onLogout && (
+                        <button type="button" onClick={onLogout} className="bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs shrink-0 cursor-pointer">
+                          Re-Login Now 🔑
+                        </button>
+                      )}
                     </div>
                   )}
 
@@ -322,7 +392,7 @@ export default function Dashboard({ supervisor, onLogout }) {
                   </form>
                 </div>
               ) : records.length === 0 ? (
-                /* 🍃 EMPTY STATE COMPONENT (Screenshot 6 requirement) */
+                /* 🍃 EMPTY STATE COMPONENT */
                 <EmptyState onAction={() => setShowForm(true)} />
               ) : selectedRecord ? (
                 /* 🖥️ Selected Record Details View */
@@ -358,14 +428,21 @@ export default function Dashboard({ supervisor, onLogout }) {
                     <div className="bg-white p-4 rounded-xl border border-gray-50 shadow-sm text-center">
                       <p className="text-xs font-semibold text-gray-400">💧 Moisture</p>
                       <p className="text-lg font-bold text-gray-900 mt-1">{selectedRecord.moisture}%</p>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full inline-block mt-1 ${selectedRecord.moisture < 30 ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'}`}>
+                        {selectedRecord.moisture < 30 ? 'Low Hydration' : 'Optimal'}
+                      </span>
                     </div>
                     <div className="bg-white p-4 rounded-xl border border-gray-50 shadow-sm text-center">
                       <p className="text-xs font-semibold text-gray-400">🌡️ Temp</p>
                       <p className="text-lg font-bold text-gray-900 mt-1">{selectedRecord.temperature}°C</p>
+                      <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full inline-block mt-1">Normal Range</span>
                     </div>
                     <div className="bg-white p-4 rounded-xl border border-gray-50 shadow-sm text-center">
                       <p className="text-xs font-semibold text-gray-400">🌿 N-P-K Status</p>
-                      <p className="text-xs font-bold text-emerald-600 mt-2 bg-emerald-50 px-2 py-0.5 rounded-full inline-block">Monitored</p>
+                      <p className="text-xs font-bold text-gray-800 mt-1">
+                        N:{selectedRecord.nitrogen ?? '-'} | P:{selectedRecord.phosphorus ?? '-'} | K:{selectedRecord.potassium ?? '-'}
+                      </p>
+                      <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full inline-block mt-1">Monitored</span>
                     </div>
                     <div className="bg-white p-4 rounded-xl border border-gray-50 shadow-sm text-center">
                       <p className="text-xs font-semibold text-gray-400">📍 Region</p>
@@ -373,15 +450,13 @@ export default function Dashboard({ supervisor, onLogout }) {
                     </div>
                   </div>
 
-                  <div className="bg-white p-6 rounded-2xl border border-emerald-100 shadow-sm space-y-3 relative overflow-hidden bg-linear-to-br from-white to-emerald-50/10">
+                  <div className="bg-white p-6 rounded-2xl border border-emerald-100 shadow-sm space-y-3 relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-1.5 h-full bg-emerald-600"></div>
                     <div className="flex items-center space-x-2">
                       <span className="text-xl">🤖</span>
-                      <h3 className="font-bold text-[#1E3F20] text-base">KrishiBodhi AI Intelligent Recommendation</h3>
+                      <h3 className="font-bold text-[#1E3F20] text-base">KrishiBodhi AI Intelligent Advisory</h3>
                     </div>
-                    <p className="text-sm text-gray-600 leading-relaxed pl-1">
-                      {selectedRecord.advisory}
-                    </p>
+                    {renderFormattedAdvisory(selectedRecord.advisory)}
                   </div>
                 </div>
               ) : null}

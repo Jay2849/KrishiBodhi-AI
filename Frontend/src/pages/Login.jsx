@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 
 export default function Login({ onLoginSuccess }) {
   const [email, setEmail] = useState('');
@@ -27,7 +27,7 @@ export default function Login({ onLoginSuccess }) {
         // ==========================================
         // 📝 SIGNUP API CALL
         // ==========================================
-        await axios.post('http://localhost:8000/auth/register', {
+        await api.post('/auth/register', {
           name: name,
           intern_id: internId,
           email: email,
@@ -41,14 +41,13 @@ export default function Login({ onLoginSuccess }) {
         // ==========================================
         // 🔑 LOGIN API CALL
         // ==========================================
-        const response = await axios.post('http://localhost:8000/auth/login', {
+        const response = await api.post('/auth/login', {
           email: email,
           password: password
         });
 
         if (response.data && response.data.access_token) {
           localStorage.setItem('token', response.data.access_token);
-          axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`;
           onLoginSuccess(response.data);
         }
       }
@@ -72,7 +71,7 @@ export default function Login({ onLoginSuccess }) {
     try {
       console.log("Redirecting system engine to Google OAuth authentication consent module...");
       
-      const response = await axios.post('http://localhost:8000/auth/oauth/callback', {
+      const response = await api.post('/auth/oauth/callback', {
         email: "jay.negi.oauth@krishibodhi.ai",
         name: "Jay Negi OAuth Supervisor",
         provider: "google"
@@ -80,7 +79,6 @@ export default function Login({ onLoginSuccess }) {
 
       if (response.data && response.data.access_token) {
         localStorage.setItem('token', response.data.access_token);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`;
         onLoginSuccess(response.data);
       }
     } catch (err) {

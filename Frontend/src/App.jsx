@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Button from './components/ui/Button';
 import Input from './components/ui/Input';
 import Loader from './components/ui/Loader';
@@ -20,12 +19,11 @@ export default function App() {
   const [inputError, setInputError] = useState('');
 
   // ==========================================
-  // 🛡️ AXIOS AUTHORIZATION INTERCEPTOR HEADERS
+  // 🛡️ SESSION INITIALIZATION & MODULE ROUTING
   // ==========================================
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       if (currentModule === 'login') {
         setCurrentModule('dashboard');
       }
@@ -59,7 +57,6 @@ export default function App() {
   const handleLogout = () => {
     // Session persistent layer properties clear block
     localStorage.removeItem('token');
-    delete axios.defaults.headers.common['Authorization'];
     setSupervisor(null);
     setCurrentModule('login');
   };
