@@ -1,5 +1,7 @@
 # 🌾 KrishiBodhi AI — Full-Stack Intelligent Agronomy Platform
 
+[![Live App (Vercel)](https://img.shields.io/badge/Vercel-Live%20App-000000.svg?style=for-the-badge&logo=vercel&logoColor=white)](https://krishi-bodhi-ai.vercel.app)
+[![Live Backend (Render)](https://img.shields.io/badge/Render-Live%20API-46E3B7.svg?style=for-the-badge&logo=render&logoColor=white)](https://krishibodhi-ai.onrender.com)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg?style=flat&logo=fastapi)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-19.0-61DAFB.svg?style=flat&logo=react)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-8.0-646CFF.svg?style=flat&logo=vite)](https://vitejs.dev/)
@@ -7,16 +9,49 @@
 [![Google Gemini](https://img.shields.io/badge/AI-Gemini%201.5%20Flash-4285F4.svg?style=flat&logo=google)](https://deepmind.google/technologies/gemini/)
 [![SQLite](https://img.shields.io/badge/Database-SQLite-003B57.svg?style=flat&logo=sqlite)](https://www.sqlite.org/)
 
-**KrishiBodhi AI** is a production-ready, full-stack precision agriculture platform engineered to empower field supervisors operating across the high-altitude agricultural terrains of Uttarakhand. The system seamlessly combines a high-speed **FastAPI** backend with a modern **React 19 + Vite** frontend, powered by **Google Gemini 1.5 Flash AI** to deliver real-time, actionable agronomy advisory intelligence.
+**KrishiBodhi AI** is a production-ready, full-stack precision agriculture platform engineered to empower field supervisors operating across high-altitude agricultural ecosystems in Uttarakhand. The system seamlessly combines a high-speed **FastAPI** backend with a modern **React 19 + Vite** frontend, powered by **Google Gemini 1.5 Flash AI** to deliver real-time, actionable agronomy advisory intelligence.
+
+---
+
+## 🌐 Deployment Documentation (Deliverable 2)
+
+> [!NOTE]  
+> **Live Production Services Status**: Both Frontend and Backend services are fully deployed and operational at the public URLs below.
+
+| Service | Host Platform | Production Public URL | Status |
+| :--- | :--- | :--- | :---: |
+| **Frontend SPA** | **Vercel** | 🔗 [https://krishi-bodhi-ai.vercel.app](https://krishi-bodhi-ai.vercel.app) | 🟢 Live |
+| **Backend REST API** | **Render** | 🔗 [https://krishibodhi-ai.onrender.com](https://krishibodhi-ai.onrender.com) | 🟢 Live |
+
+### 🛠️ Production Tech Stack Summary
+- **Frontend Layer**: React 19, Vite 8, Axios (JWT Authorization Interceptor), Tailwind CSS v4, Lucide Icons.
+- **Frontend Deployment**: Hosted on Vercel with single-page routing rewrite engine configured via `vercel.json`.
+- **Backend Layer**: Python 3.11, FastAPI ASGI Framework, Uvicorn Server, SQLAlchemy ORM.
+- **Backend Deployment**: Web Service hosted on Render with automatic GitHub deployment pipeline.
+- **Database Engine**: Persistent SQLite Database (`krishibodhi.db`) with automatic schema initialization.
+- **AI Intelligence**: Google Gemini 1.5 Flash Generative Language Model paired with a rule-based agronomy fail-safe fallback engine.
+- **Security Framework**: Passlib + SHA-256 fallback password hashing, PyJWT bearer token authorization matrix, SlowAPI rate limiting.
+
+### ⚠️ Known Limitations on Free Tier
+> [!WARNING]  
+> Please review the following free-tier operational behaviors during testing:
+
+1. **Render Container Cold Starts (15-min Idle Spin-down)**:
+   - Render's Free Instance spins down after **15 minutes of inactivity** to save resources.
+   - The **very first HTTP request** after an idle period takes **20 to 45 seconds** to awaken the backend container. All subsequent requests execute instantly (<200ms).
+2. **Ephemeral Database Storage on Free Instances**:
+   - Render's free tier provides transient disk storage on container re-deploys. Saved metrics persist continuously while the instance is running, but database state resets on new code deployments.
+3. **Gemini AI API Quota & Fail-Safe Fallback**:
+   - Free tier Gemini 1.5 Flash has a 15 Requests/Min (RPM) quota. If network latency occurs or rate limits are reached, the system automatically engages the built-in rule-based fallback advisory engine to ensure 100% operational uptime.
 
 ---
 
 ## ✨ Key Platform Features
 
 ### 🔐 1. Advanced Security & Authentication Matrix
-- **JWT Bearer Token System**: 60-minute expiring JSON Web Tokens with strict authorization guards.
-- **Password Hashing**: Secure password encryption utilizing `passlib` and `bcrypt`.
-- **Rate-Limiting Protection**: SlowAPI middleware protecting authentication endpoints against brute-force attacks (5 requests/min on registration, 3 requests/min on login).
+- **JWT Bearer Token System**: 60-minute expiring JSON Web Tokens with strict authorization guards on protected routes (`/metrics/*`).
+- **Password Hashing**: Dual-layer encryption using `passlib` with fallback `SHA-256` hashing preventing cross-platform bcrypt compilation issues.
+- **Rate-Limiting Protection**: SlowAPI middleware protecting endpoints against brute-force attacks (`60 requests/min`).
 - **Google OAuth 2.0 Identity Resolution**: Seamless OAuth callback handler with dynamic user account auto-provisioning.
 
 ### 🤖 2. Gemini 1.5 Flash AI Advisory Engine
@@ -34,8 +69,8 @@
 - **Live Search & Filtering**: Client-side search bar for instant lookup of farmer evaluations.
 
 ### 📱 4. Low-Bandwidth & Adaptive Design System
-- Built using **Tailwind CSS v4** and styled component blocks.
-- Optimized for instant loading across weak 2G/3G regional networks.
+- Built using **Tailwind CSS v4** and custom styled component blocks.
+- Optimized for instant loading across weak regional networks (2G/3G compatible).
 - Fully responsive across viewports from **375px (Mobile)** to **1440px (Desktop)**.
 
 ---
@@ -45,18 +80,18 @@
 ```text
                                  +-----------------------------------+
                                  |   React 19 + Vite Frontend SPA    |
-                                 |  (Tailwind v4, Axios Interceptor) |
+                                 |  (Vercel: krishi-bodhi-ai)        |
                                  +-----------------------------------+
                                                    |
                                                    | REST API (HTTP / Bearer JWT)
                                                    v
                                  +-----------------------------------+
                                  |         FastAPI Gateway           |
-                                 |  (SlowAPI Rate Limiter & CORS)    |
+                                 |  (Render: krishibodhi-ai)         |
                                  +-----------------------------------+
-                                        /                     \
-                                       /                       \
-                                      v                         v
+                                         /                     \
+                                        /                       \
+                                       v                         v
         +-----------------------------------+     +-----------------------------------+
         |       SQLAlchemy ORM Matrix       |     |      Google Gemini 1.5 Flash      |
         |       (SQLite Data Persistence)   |     |    (Intelligent Agronomy Engine)  |
@@ -69,13 +104,15 @@
 
 ```text
 KrishiBodhi AI/
-├── README.md                          # Primary Repository Documentation Overview
+├── README.md                          # Primary Repository Documentation Overview (Deliverable 2)
 ├── PROMPTS.md                         # Prompt Engineering Execution & Validation Log
 ├── W6_AuthAPICollection_JayNegi.json  # Postman API Collection
 ├── requirements.txt                   # Root Python Backend Dependencies
 │
 ├── Backend/                           # Core REST API Gateway & Database Engine
 │   ├── .env                           # Environment Variables (GEMINI_API_KEY)
+│   ├── .env.example                   # Production Environment Configuration Template
+│   ├── Procfile                       # Render Web Service Process Command
 │   ├── krishibodhi.db                 # SQLite Relational Database Engine
 │   ├── requirements.txt               # Backend Dependencies Specification
 │   └── app/
@@ -90,6 +127,7 @@ KrishiBodhi AI/
 │           └── ai.py                  # Direct Soil Advisory API Endpoint
 │
 └── Frontend/                          # Client SPA (React + Vite + Tailwind v4)
+    ├── vercel.json                    # Vercel Single-Page Application Rewrites Rule
     ├── package.json                   # Client Dependencies & Build Scripts
     ├── index.html                     # HTML5 Root Application Entry
     └── src/
@@ -100,16 +138,28 @@ KrishiBodhi AI/
         │   └── api.js                 # Centralized Axios Service & JWT Interceptor
         ├── components/                # Modular UI Elements
         │   ├── EditModal.jsx          # Metric Edit Modal (N, P, K, Temp, Moisture)
-        │   ├── EmptyState.jsx         # Zero-Data Display Component
-        │   └── ui/                    # Reusable Buttons, Inputs, Loaders, Toasts
-        ├── context/
-        │   └── AuthContext.jsx        # Auth Context State Provider
+        │   └── EmptyState.jsx         # Zero-Data Display Component
         └── pages/
             ├── Dashboard.jsx          # Authenticated Field Supervisor Hub
-            ├── Login.jsx              # Auth Portal Gate & Google OAuth Simulation
+            ├── Login.jsx              # Auth Portal Gate & Google OAuth Flow
             ├── Home.jsx               # Landing Page & Core Pillars Showcase
             └── About.jsx              # Mission & Mandakini Collective Overview
 ```
+
+---
+
+## 🔌 API Endpoint Specifications
+
+| Method | Endpoint | Description | Auth Required | Rate Limit |
+| :--- | :--- | :--- | :---: | :---: |
+| `POST` | `/auth/register` | Register a new Field Supervisor | ❌ | 60/min |
+| `POST` | `/auth/login` | Authenticate supervisor & return JWT token | ❌ | 60/min |
+| `POST` | `/auth/oauth/callback` | OAuth 2.0 dynamic account authentication | ❌ | — |
+| `GET` | `/metrics/supervisor/me` | Fetch all telemetry records for logged-in supervisor | 🛡️ Bearer JWT | — |
+| `POST` | `/metrics/submit` | Submit field telemetry & generate Gemini AI advisory | 🛡️ Bearer JWT | — |
+| `PUT` | `/metrics/update/{id}` | Update existing metric record & re-evaluate AI advice | 🛡️ Bearer JWT | — |
+| `DELETE` | `/metrics/delete/{id}` | Permanently delete a telemetry record | 🛡️ Bearer JWT | — |
+| `POST` | `/api/ai/recommendation` | Direct AI recommendation API endpoint | ❌ | — |
 
 ---
 
@@ -119,8 +169,6 @@ KrishiBodhi AI/
 - **Node.js**: v18.0 or higher
 - **Python**: v3.10 or higher
 - **Git**
-
----
 
 ### 1. Clone Repository & Setup Environment
 ```bash
@@ -132,6 +180,7 @@ cd "KrishiBodhi AI"
 1. Create a `.env` file inside the `Backend/` directory:
    ```env
    GEMINI_API_KEY="YOUR_GOOGLE_GEMINI_API_KEY"
+   SECRET_KEY="YOUR_SUPER_SECRET_KEY"
    ```
 2. Install Python dependencies:
    ```bash
@@ -161,55 +210,6 @@ cd "KrishiBodhi AI"
 
 ---
 
-## 💾 Database Schema & ER Diagram
-
-The SQLite database manages data integrity via SQLAlchemy ORM using a **One-to-Many ($1 \rightarrow N$)** relationship between Supervisors and Field Metrics:
-
-```text
-       +-----------------------------------+
-       |            SUPERVISORS            |
-       +-----------------------------------+
-       | id (PK)            [Integer, Inc] | <-------+
-       | intern_id          [String, Uniq] |         |
-       | name               [String]       |         |
-       | email              [String, Uniq] |         |
-       | hashed_password    [String]       |         |
-       | created_at         [Timestamp]    |         |
-       +-----------------------------------+         |
-                                                     | (1-to-Many Relationship)
-       +-----------------------------------+         |
-       |           FIELD_METRICS           |         |
-       +-----------------------------------+         |
-       | id (PK)            [Integer, Inc] |         |
-       | supervisor_id (FK) [Integer]      | --------+
-       | farmer_name        [String]       |
-       | soil_moisture      [Float]        |
-       | temperature        [Float]        |
-       | nitrogen_level     [Float]        |
-       | phosphorus_level   [Float]        |
-       | potassium_level    [Float]        |
-       | ai_advisory        [Text]         |
-       | timestamp          [Timestamp]    |
-       +-----------------------------------+
-```
-
----
-
-## 🔌 API Endpoint Specifications
-
-| Method | Endpoint | Description | Auth Required | Rate Limit |
-| :--- | :--- | :--- | :---: | :---: |
-| `POST` | `/auth/register` | Register a new Field Supervisor | ❌ | 5/min |
-| `POST` | `/auth/login` | Authenticate supervisor & return JWT token | ❌ | 3/min |
-| `POST` | `/auth/oauth/callback` | OAuth 2.0 dynamic account authentication | ❌ | — |
-| `GET` | `/metrics/supervisor/me` | Fetch all telemetry records for logged-in supervisor | 🛡️ Bearer JWT | — |
-| `POST` | `/metrics/submit` | Submit field telemetry & generate Gemini AI advisory | 🛡️ Bearer JWT | — |
-| `PUT` | `/metrics/update/{id}` | Update existing metric record & re-evaluate AI advice | 🛡️ Bearer JWT | — |
-| `DELETE` | `/metrics/delete/{id}` | Permanently delete a telemetry record | 🛡️ Bearer JWT | — |
-| `POST` | `/api/ai/recommendation` | Direct AI recommendation API endpoint | ❌ | — |
-
----
-
 ## 🧪 Build & Verification Commands
 
 ### Frontend Production Build
@@ -225,31 +225,6 @@ python -m py_compile Backend/app/main.py Backend/app/database.py Backend/app/mod
 
 ---
 
-## 🌐 Deployment Documentation (Deliverable 2)
-
-### 🔗 Live Service URLs
-- **Live Frontend URL (Vercel)**: `https://krishibodhi-ai.vercel.app` *(Replace with your actual Vercel URL)*
-- **Live Backend URL (Render)**: `https://krishibodhi-ai-backend.onrender.com` *(Replace with your actual Render URL)*
-
-### 🛠️ Production Tech Stack Summary
-- **Frontend Hosting**: Vercel (Single Page Application rewrite handling via `vercel.json`).
-- **Backend Hosting**: Render Web Service (FastAPI running with Uvicorn ASGI server).
-- **Database Layer**: SQLite persistent database (`krishibodhi.db`).
-- **AI Intelligence**: Google Gemini 1.5 Flash API with fail-safe rule-based agronomy fallback.
-- **Security Matrix**: Passlib bcrypt password hashing, PyJWT bearer token authorization, SlowAPI rate-limiting middleware.
-
-### ⚠️ Known Limitations on Free Tier
-- **Render Backend Cold Starts (Spin-down on Inactivity)**:
-  - Render's Free Instance spins down after **15 minutes of inactivity** to conserve resources.
-  - The first request after an idle period can take **30 to 60 seconds** to wake up the backend container. Subsequent requests execute instantly (<200ms).
-- **SQLite Database Persistence on Free Containers**:
-  - Render free web services have ephemeral storage on container redeploys; data resets on new code deployments unless attached to a persistent disk or cloud database (e.g., Supabase PostgreSQL).
-- **Gemini API Quotas**:
-  - Standard free tier Gemini 1.5 Flash rate limits apply (15 RPM). In case of quota exhaustion or network timeout, the backend seamlessly switches to the built-in rule-based fallback agronomy engine.
-
----
-
 ## 📄 License & Placement Project Alignment
 
 Developed as a core Capstone & Placement Internship Project for **Graphic Era Hill University**, supporting agricultural technology operations for high-altitude ecosystems in Uttarakhand.
-
