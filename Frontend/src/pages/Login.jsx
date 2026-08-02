@@ -55,7 +55,7 @@ export default function Login({ onLoginSuccess }) {
       if (err.response && err.response.data && err.response.data.detail) {
         setError(err.response.data.detail);
       } else {
-        setError('Server execution error or Rate Limit Exceeded (429)!');
+        setError('Backend server connecting... Render server may be spinning up from idle (takes ~30s). Please click again!');
       }
     } finally {
       setLoading(false);

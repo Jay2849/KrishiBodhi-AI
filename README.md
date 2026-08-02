@@ -225,6 +225,31 @@ python -m py_compile Backend/app/main.py Backend/app/database.py Backend/app/mod
 
 ---
 
+## 🌐 Deployment Documentation (Deliverable 2)
+
+### 🔗 Live Service URLs
+- **Live Frontend URL (Vercel)**: `https://krishibodhi-ai.vercel.app` *(Replace with your actual Vercel URL)*
+- **Live Backend URL (Render)**: `https://krishibodhi-ai-backend.onrender.com` *(Replace with your actual Render URL)*
+
+### 🛠️ Production Tech Stack Summary
+- **Frontend Hosting**: Vercel (Single Page Application rewrite handling via `vercel.json`).
+- **Backend Hosting**: Render Web Service (FastAPI running with Uvicorn ASGI server).
+- **Database Layer**: SQLite persistent database (`krishibodhi.db`).
+- **AI Intelligence**: Google Gemini 1.5 Flash API with fail-safe rule-based agronomy fallback.
+- **Security Matrix**: Passlib bcrypt password hashing, PyJWT bearer token authorization, SlowAPI rate-limiting middleware.
+
+### ⚠️ Known Limitations on Free Tier
+- **Render Backend Cold Starts (Spin-down on Inactivity)**:
+  - Render's Free Instance spins down after **15 minutes of inactivity** to conserve resources.
+  - The first request after an idle period can take **30 to 60 seconds** to wake up the backend container. Subsequent requests execute instantly (<200ms).
+- **SQLite Database Persistence on Free Containers**:
+  - Render free web services have ephemeral storage on container redeploys; data resets on new code deployments unless attached to a persistent disk or cloud database (e.g., Supabase PostgreSQL).
+- **Gemini API Quotas**:
+  - Standard free tier Gemini 1.5 Flash rate limits apply (15 RPM). In case of quota exhaustion or network timeout, the backend seamlessly switches to the built-in rule-based fallback agronomy engine.
+
+---
+
 ## 📄 License & Placement Project Alignment
 
 Developed as a core Capstone & Placement Internship Project for **Graphic Era Hill University**, supporting agricultural technology operations for high-altitude ecosystems in Uttarakhand.
+
